@@ -12,10 +12,16 @@ export default function Navbar() {
             <Link to="/all-books" className="text-white hover:underline">All Books</Link>
           </li>
           <li>
+            <Link to="/add-new-book" className="text-white hover:underline">Add New Book</Link>
+          </li>
+          <li>
             <Link to="/sign-in" className="text-white hover:underline">Sign In</Link>
           </li>
           <li>
             <Link to="/sign-up" className="text-white hover:underline">Sign Up</Link>
+          </li>
+          <li>
+            <Link to="/my-profile" className="text-white hover:underline">My Profile</Link>
           </li>
           <li>
             <button type='submit' className="bg-red-900 text-white px-2">Sign Out</button>
