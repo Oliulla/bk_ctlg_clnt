@@ -1,22 +1,35 @@
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
+import { useAddNewBookMutation } from "../redux/api/apiSlice";
+import { toast } from "react-toastify";
 
 interface BookFormData {
   title: string;
   author: string;
   genre: string;
-  publicationDate: string;
+  publication_date: string;
 }
 
 export default function AddNewBookForm() {
-  const { register, handleSubmit } = useForm<BookFormData>();
+  const { register, handleSubmit, reset } = useForm<BookFormData>();
 
-  const onSubmit = (data: BookFormData) => {
-    console.log(data); // You can replace this with your logic to submit the form data
+  const [addBook] = useAddNewBookMutation();
+
+  const onSubmit = async (data: BookFormData) => {
+    // console.log(data);
+
+    try {
+      await addBook(data);
+      toast.success("Book added");
+      reset(); 
+    } catch (error) {
+      // Handle error here if needed
+      console.error("Error adding book:", error);
+    }
   };
 
   return (
     <div>
-        <h2 className="text-2xl font-semibold mb-4">Add A New Book</h2>
+      <h2 className="text-2xl font-semibold mb-4">Add A New Book</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
         <div className="mb-4">
           <label htmlFor="title" className="block text-lg font-semibold mb-2">
@@ -25,7 +38,7 @@ export default function AddNewBookForm() {
           <input
             type="text"
             id="title"
-            {...register('title', { required: true })}
+            {...register("title", { required: true })}
             placeholder="Enter title"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -38,7 +51,7 @@ export default function AddNewBookForm() {
           <input
             type="text"
             id="author"
-            {...register('author', { required: true })}
+            {...register("author", { required: true })}
             placeholder="Enter author"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -51,7 +64,7 @@ export default function AddNewBookForm() {
           <input
             type="text"
             id="genre"
-            {...register('genre', { required: true })}
+            {...register("genre", { required: true })}
             placeholder="Enter genre"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -59,15 +72,15 @@ export default function AddNewBookForm() {
 
         <div className="mb-4">
           <label
-            htmlFor="publicationDate"
+            htmlFor="publication_date"
             className="block text-lg font-semibold mb-2"
           >
             Publication Date
           </label>
           <input
             type="date"
-            id="publicationDate"
-            {...register('publicationDate', { required: true })}
+            id="publication_date"
+            {...register("publication_date", { required: true })}
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

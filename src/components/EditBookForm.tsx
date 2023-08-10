@@ -1,24 +1,30 @@
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { dummyBooks } from "../components/RecentBooks";
+import { useGetBookDetailsQuery } from "../redux/api/apiSlice";
+import Loading from "./ui/Loading";
 
 interface BookFormData {
   title: string;
   author: string;
   genre: string;
-  publicationDate: string;
+  publication_date: string;
 }
 
 export default function EditBookForm() {
   const { id } = useParams();
-  const bookToEdit = dummyBooks.find((dbBook) => dbBook.id === Number(id));
+  const { data, isLoading } = useGetBookDetailsQuery(id);
+  const bookToEdit = data?.data;
 
-  const { register, handleSubmit } = useForm<BookFormData>({
-    defaultValues: bookToEdit, // Set the default values to the book being edited
-  });
+  console.log(bookToEdit)
+
+  const { register, handleSubmit } = useForm<BookFormData>();
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const onSubmit = (data: BookFormData) => {
-    console.log(data); // You can replace this with your logic to update the book data
+    console.log(data);
   };
 
   return (
@@ -32,6 +38,7 @@ export default function EditBookForm() {
           <input
             type="text"
             id="title"
+            defaultValue={bookToEdit.title}
             {...register("title", { required: true })}
             placeholder="Enter title"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -45,6 +52,7 @@ export default function EditBookForm() {
           <input
             type="text"
             id="author"
+            defaultValue={bookToEdit.author}
             {...register("author", { required: true })}
             placeholder="Enter author"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -58,6 +66,7 @@ export default function EditBookForm() {
           <input
             type="text"
             id="genre"
+            defaultValue={bookToEdit.genre}
             {...register("genre", { required: true })}
             placeholder="Enter genre"
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -72,9 +81,10 @@ export default function EditBookForm() {
             Publication Date
           </label>
           <input
-            type="date"
-            id="publicationDate"
-            {...register("publicationDate", { required: true })}
+            type="text"
+            id="publication_date"
+            defaultValue={bookToEdit.publication_date.split("T00")[0]}
+            {...register("publication_date", { required: true })}
             className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

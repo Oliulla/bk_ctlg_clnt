@@ -1,24 +1,30 @@
-import { useParams, Link } from 'react-router-dom';
-import { dummyBooks } from '../components/RecentBooks';
+import { useParams, Link } from "react-router-dom";
+import { useGetBookDetailsQuery } from "../redux/api/apiSlice";
+import Loading from "../components/ui/Loading";
 
 export default function BookDetailsPage() {
   const { id } = useParams();
-  const books = dummyBooks.filter(dbBook => dbBook?.id === Number(id));
-  const book = books[0];
+  const { data, isLoading } = useGetBookDetailsQuery(id);
+  const book = data?.data;
+  console.log(book)
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // Dummy reviews
   const reviews = [
     {
       id: 1,
-      username: 'User123',
+      username: "User123",
       rating: 4,
-      comment: 'A captivating read. Highly recommended!',
+      comment: "A captivating read. Highly recommended!",
     },
     {
       id: 2,
-      username: 'BookLover22',
+      username: "BookLover22",
       rating: 5,
-      comment: 'One of the best books I have ever read!',
+      comment: "One of the best books I have ever read!",
     },
     // Add more reviews here
   ];
@@ -29,7 +35,10 @@ export default function BookDetailsPage() {
         <h1 className="text-2xl font-semibold mb-4">{book.title}</h1>
         <p className="text-gray-600 mb-2">Author: {book.author}</p>
         <p className="text-gray-600 mb-2">Genre: {book.genre}</p>
-        <p className="text-gray-600">Publication Date: {book.publicationDate}</p>
+        <p className="text-gray-600">
+          {" "}
+          Publication Date: {book.publication_date.split("T00")[0]}
+        </p>
 
         <div className="mt-4 space-x-2">
           <Link
@@ -49,7 +58,7 @@ export default function BookDetailsPage() {
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        {reviews.map(review => (
+        {reviews.map((review) => (
           <div key={review.id} className="border-b py-4">
             <p className="text-gray-600 mb-1">User: {review.username}</p>
             <p className="mb-1">Rating: {review.rating} stars</p>

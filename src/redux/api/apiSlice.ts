@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { apiOperationMethods } from "../../constants/apiOperationMethods";
 
 // Define a service using a base URL and expected endpoints
 export const booksApi = createApi({
@@ -10,7 +11,7 @@ export const booksApi = createApi({
     }),
     getAllBooks: builder.query({
       query: ({ dataLimit, searchTerm, genre, publication_date }) => {
-        console.log(dataLimit, searchTerm, genre, publication_date);
+        // console.log(dataLimit, searchTerm, genre, publication_date);
         let queryString = `books/get-all-books?page=1&limit=${dataLimit}`;
 
         if (searchTerm) {
@@ -28,9 +29,24 @@ export const booksApi = createApi({
         return queryString;
       },
     }),
+    getBookDetails: builder.query({
+      query: (id) => `books/${id}`,
+    }),
+    addNewBook: builder.mutation({
+      query: (data) => ({
+        url: `books/create-book`,
+        method: apiOperationMethods.POST,
+        body: data,
+      }),
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetRecentBooksQuery, useGetAllBooksQuery } = booksApi;
+export const {
+  useGetRecentBooksQuery,
+  useGetAllBooksQuery,
+  useGetBookDetailsQuery,
+  useAddNewBookMutation,
+} = booksApi;
