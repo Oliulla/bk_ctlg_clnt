@@ -1,12 +1,19 @@
-import { useParams, Link } from "react-router-dom";
-import { useGetBookDetailsQuery } from "../redux/api/apiSlice";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  useDeleteABookMutation,
+  useGetBookDetailsQuery,
+} from "../redux/api/apiSlice";
 import Loading from "../components/ui/Loading";
+import { toast } from "react-toastify";
 
 export default function BookDetailsPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { data, isLoading } = useGetBookDetailsQuery(id);
   const book = data?.data;
-  console.log(book)
+  // console.log(book)
+
+  const [deleteBook] = useDeleteABookMutation();
 
   if (isLoading) {
     return <Loading />;
@@ -29,6 +36,23 @@ export default function BookDetailsPage() {
     // Add more reviews here
   ];
 
+  const handleBookDelete = async (bookId: string | undefined) => {
+    // Show a confirmation dialog to the user
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this book?"
+    );
+    if (isConfirmed) {
+      try {
+        await deleteBook(bookId);
+        toast.success("Book Deleted");
+        return navigate("/all-books");
+      } catch (error) {
+        // Handle error here if needed
+        console.error("Error Delete book:", error);
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="bg-white rounded-lg shadow-md p-6 mb-4">
@@ -48,7 +72,7 @@ export default function BookDetailsPage() {
             Edit
           </Link>
           <button
-            // onClick={() => handleDelete(id)} // Implement your delete logic
+            onClick={() => handleBookDelete(id)}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           >
             Delete

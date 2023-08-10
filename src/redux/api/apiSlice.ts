@@ -5,9 +5,11 @@ import { apiOperationMethods } from "../../constants/apiOperationMethods";
 export const booksApi = createApi({
   reducerPath: "booksApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api/v1" }),
+  tagTypes: ["books"],
   endpoints: (builder) => ({
     getRecentBooks: builder.query({
       query: () => `books/get-all-books`,
+      providesTags: ["books"],
     }),
     getAllBooks: builder.query({
       query: ({ dataLimit, searchTerm, genre, publication_date }) => {
@@ -28,6 +30,7 @@ export const booksApi = createApi({
 
         return queryString;
       },
+      providesTags: ["books"],
     }),
     getBookDetails: builder.query({
       query: (id) => `books/${id}`,
@@ -39,6 +42,13 @@ export const booksApi = createApi({
         body: data,
       }),
     }),
+    deleteABook: builder.mutation({
+      query: (id) => ({
+        url: `books/${id}`,
+        method: apiOperationMethods.DELETE,
+      }),
+      invalidatesTags: ["books"],
+    }),
   }),
 });
 
@@ -49,4 +59,5 @@ export const {
   useGetAllBooksQuery,
   useGetBookDetailsQuery,
   useAddNewBookMutation,
+  useDeleteABookMutation,
 } = booksApi;
