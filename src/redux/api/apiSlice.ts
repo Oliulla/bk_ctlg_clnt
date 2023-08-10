@@ -8,9 +8,12 @@ export const booksApi = createApi({
     getRecentBooks: builder.query({
       query: () => `books/get-all-books`,
     }),
+    getAllBooks: builder.query({
+      query: (dataLimit) => `books/get-all-books?page=1&limit=${dataLimit}`,
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetRecentBooksQuery } = booksApi;
+export const { useGetRecentBooksQuery, useGetAllBooksQuery } = booksApi;
