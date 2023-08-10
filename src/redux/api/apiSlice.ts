@@ -9,7 +9,24 @@ export const booksApi = createApi({
       query: () => `books/get-all-books`,
     }),
     getAllBooks: builder.query({
-      query: (dataLimit) => `books/get-all-books?page=1&limit=${dataLimit}`,
+      query: ({ dataLimit, searchTerm, genre, publication_date }) => {
+        console.log(dataLimit, searchTerm, genre, publication_date);
+        let queryString = `books/get-all-books?page=1&limit=${dataLimit}`;
+
+        if (searchTerm) {
+          queryString += `&searchTerm=${searchTerm}`;
+        }
+
+        if (genre) {
+          queryString += `&genre=${genre}`;
+        }
+
+        if (publication_date) {
+          queryString += `&publication_date=${publication_date}`;
+        }
+
+        return queryString;
+      },
     }),
   }),
 });

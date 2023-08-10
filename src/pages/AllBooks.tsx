@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useState } from "react";
 import { Link } from "react-router-dom";
 // import { dummyBooks } from '../components/RecentBooks';
 import {
@@ -8,24 +10,42 @@ import Loading from "../components/ui/Loading";
 import { IBooks } from "../types/globalTypes";
 
 export default function AllBooks() {
-  const { data: recentBooks } = useGetRecentBooksQuery(undefined);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterGenre, setFilterGenre] = useState("");
+  const [filterPublicationDate, setFilterPublicationDate] = useState("");
+  // const [allBooksD, setAllBooksD] = useState([]);
+
+  const { data: recentBooks, isLoading: isRecentBookLoading } =
+    useGetRecentBooksQuery(undefined);
   const books = recentBooks?.data;
 
-  // const genres = [
-  //   ...new Set(books?.map((book: { genre: string }) => book.genre)),
-  // ];
+  const dataLimit = recentBooks?.meta?.total;
 
-  const genres = books?.map((book: { genre: string; }) => book.genre)
+  const genres = books?.map((book: { genre: string }) => book.genre);
 
-  const publicationYears = books?.map((book: { publication_date: string; }) => book.publication_date.split("T00")[0])
-
-  
-
-
-  const { data, isLoading, isError } = useGetAllBooksQuery(
-    recentBooks?.meta?.total
+  const publicationYears = books?.map(
+    (book: { publication_date: string }) =>
+      book.publication_date.split("T00")[0]
   );
+
+  // console.log(dataLimit);
+  // const queryString =
+  //   `page=1&limit=${dataLimit}` +
+  //   (searchTerm ? `&searchTerm=${searchTerm}` : "") +
+  //   (filterGenre ? `&genre=${filterGenre}` : "") +
+  //   (filterPublicationDate ? `&publication_date=${filterPublicationDate}` : "");
+
+  const { data, isLoading, isError } = useGetAllBooksQuery({
+    dataLimit,
+    searchTerm,
+    genre: filterGenre,
+    publication_date: filterPublicationDate,
+  });
   const allBooks = data?.data;
+
+  if (isRecentBookLoading) {
+    return <Loading />;
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -34,23 +54,27 @@ export default function AllBooks() {
     return "Something went wrong";
   }
 
+  // console.log(searchTerm, filterGenre, filterPublicationDate)
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-semibold mb-4">All Books</h1>
-
       <div className="mb-4 flex space-x-4">
         <input
           type="text"
           placeholder="Search by title, author, or genre"
           className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Search
-        </button>
       </div>
 
       <div className="flex flex-col md:flex-row mb-4 space-y-4 md:space-y-0 md:space-x-4">
-        <select className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select
+          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={filterGenre}
+          onChange={(e) => setFilterGenre(e.target.value)}
+        >
           <option value="">Select Genre</option>
           {genres?.map((genre: string, index: number) => (
             <option key={index} value={genre}>
@@ -59,7 +83,11 @@ export default function AllBooks() {
           ))}
         </select>
 
-        <select className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select
+          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={filterPublicationDate}
+          onChange={(e) => setFilterPublicationDate(e.target.value)}
+        >
           <option value="">Select Publications Year</option>
           {publicationYears?.map((year: string, index: number) => (
             <option key={index} value={year}>
