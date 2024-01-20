@@ -2,12 +2,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 // import { dummyBooks } from '../components/RecentBooks';
-import {
-  useGetAllBooksQuery,
-  useGetRecentBooksQuery,
-} from "../redux/api/apiSlice";
+
 import Loading from "../components/ui/Loading";
 import { IBooks } from "../types/globalTypes";
+import { useGetAllBooksQuery, useGetRecentBooksQuery } from "../redux/apis/booksApi";
 
 export default function AllBooks() {
   const [searchTerm, setSearchTerm] = useState("");

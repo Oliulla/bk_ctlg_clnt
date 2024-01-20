@@ -1,11 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiOperationMethods } from "../../constants/apiOperationMethods";
+import { rootSplitApis } from "./rootSplitApis";
 
-// Define a service using a base URL and expected endpoints
-export const booksApi = createApi({
-  reducerPath: "booksApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api/v1" }),
-  tagTypes: ["books"],
+const booksApi = rootSplitApis.injectEndpoints({
   endpoints: (builder) => ({
     getRecentBooks: builder.query({
       query: () => `books/get-all-books`,
@@ -52,8 +48,6 @@ export const booksApi = createApi({
   }),
 });
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const {
   useGetRecentBooksQuery,
   useGetAllBooksQuery,

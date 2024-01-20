@@ -1,4 +1,4 @@
-import { useGetRecentBooksQuery } from "../redux/api/apiSlice";
+import { useGetRecentBooksQuery } from "../redux/apis/booksApi";
 import { IBooks } from "../types/globalTypes";
 import Loading from "./ui/Loading";
 

@@ -1,10 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  useDeleteABookMutation,
-  useGetBookDetailsQuery,
-} from "../redux/api/apiSlice";
+
 import Loading from "../components/ui/Loading";
 import { toast } from "react-toastify";
+import { useDeleteABookMutation, useGetBookDetailsQuery } from "../redux/apis/booksApi";
 
 export default function BookDetailsPage() {
   const navigate = useNavigate();

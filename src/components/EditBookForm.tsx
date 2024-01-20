@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useGetBookDetailsQuery } from "../redux/api/apiSlice";
 import Loading from "./ui/Loading";
+import { useGetBookDetailsQuery } from "../redux/apis/booksApi";
 
 interface BookFormData {
   title: string;
