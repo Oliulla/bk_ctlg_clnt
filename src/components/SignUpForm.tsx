@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "./ui/__Loader/__Loader";
+import { useUserSignUpMutation } from "../redux/apis/authApis";
 
 interface SignupFormInputs {
   email: string;
@@ -16,47 +16,63 @@ export default function SignUpForm() {
     formState: { errors },
   } = useForm<SignupFormInputs>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  const [userSignUp, { isLoading: isSigningUp }] = useUserSignUpMutation();
 
-  const base_url = import.meta.env.VITE_APP_BASE_API_URL;
+  // const base_url = import.meta.env.VITE_APP_BASE_API_URL;
 
   const onSubmit = async (data: SignupFormInputs) => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(`${base_url}/auth/sign-up`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
+    // try {
+    //   setIsLoading(true);
+    //   const res = await fetch(`${base_url}/auth/sign-up`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ email: data.email, password: data.password }),
+    //   });
 
-      if (res.ok) {
-        const resData = await res.json();
+    //   if (res.ok) {
+    //     const resData = await res.json();
 
-        if (resData.success) {
-          toast.success(resData?.message);
-          navigate("/sign-in");
-          // const loginUserData = await loginUserAfterSuccessfullySignedUp({
-          //   userCredentials: resData.data,
-          // });
+    //     if (resData.success) {
+    //       toast.success(resData?.message);
+    //       navigate("/sign-in");
+    //       // const loginUserData = await loginUserAfterSuccessfullySignedUp({
+    //       //   userCredentials: resData.data,
+    //       // });
 
-          // if (loginUserData?.accessToken) {
-          //   // Set accessToken in an HttpOnly cookie with expiration from the API response
-          //   setCookie("accessToken", resData.data.accessToken);
+    //       // if (loginUserData?.accessToken) {
+    //       //   // Set accessToken in an HttpOnly cookie with expiration from the API response
+    //       //   setCookie("accessToken", resData.data.accessToken);
 
-          //   navigate("/");
-          // }
-        }
-      } else {
-        const errorData = await res.json();
-        toast.warn(errorData?.message);
-      }
-    } catch (error) {
-      toast.warn("Something went wrong during signup. Please try again.");
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
+    //       //   navigate("/");
+    //       // }
+    //     }
+    //   } else {
+    //     const errorData = await res.json();
+    //     toast.warn(errorData?.message);
+    //   }
+    // } catch (error) {
+    //   toast.warn("Something went wrong during signup. Please try again.");
+    //   console.error("Error:", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+    const res: any = await userSignUp(data);
+
+    // console.log("res", res);
+
+    if (res?.data?.success === false) {
+      toast.error(res?.data?.message);
+    }
+
+    if (res?.data?.success) {
+      toast.success(res?.data?.message);
+      // Redirect to the customer dashboard
+      navigate("/sign-in");
+    } else {
+      console.error("Error logging in");
     }
   };
 
@@ -91,7 +107,7 @@ export default function SignUpForm() {
 
   return (
     <>
-      {isLoading ? (
+      {isSigningUp ? (
         <Loader />
       ) : (
         <>
