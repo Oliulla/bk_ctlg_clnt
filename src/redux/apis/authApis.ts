@@ -17,7 +17,17 @@ const authApi = rootSplitApis.injectEndpoints({
         body: data,
       }),
     }),
+    userLogOut: builder.mutation({
+      query: () => ({
+        url: `auth/log-out`,
+        method: apiOperationMethods.POST,
+      }),
+    }),
   }),
 });
 
-export const { useUserSignUpMutation, useUserLoginMutation } = authApi;
+export const {
+  useUserSignUpMutation,
+  useUserLoginMutation,
+  useUserLogOutMutation,
+} = authApi;

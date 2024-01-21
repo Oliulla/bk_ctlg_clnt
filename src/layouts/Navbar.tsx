@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { setToken } from "../redux/authSlice/authSlice";
 import { useState } from "react";
-import { apiOperationMethods } from "../constants/apiOperationMethods";
+// import { apiOperationMethods } from "../constants/apiOperationMethods";
 import { toast } from "react-toastify";
+import { useUserLogOutMutation } from "../redux/apis/authApis";
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const [isLogOut, setIsLogOut] = useState<Boolean>(false);
+  const [userLogOut, { isLoading: isUserLogoutLoading }] =
+    useUserLogOutMutation();
 
   // Handle admin logout
   const handleSignOut = async () => {
@@ -19,16 +22,18 @@ export default function Navbar() {
     //   path: "/",
     // });
 
-    const res = await fetch("http://localhost:5000/api/v1/auth/log-out", {
-      method: apiOperationMethods.POST,
-      credentials: "include",
-    });
+    // const res = await fetch("http://localhost:5000/api/v1/auth/log-out", {
+    //   method: apiOperationMethods.POST,
+    //   credentials: "include",
+    // });
 
-    // console.log("res -->", res);
-    const data = await res.json();
+    // // console.log("res -->", res);
+    // const data = await res.json();
+
+    const res: any = await userLogOut({});
 
     // console.log("res data -->", data);
-    toast.success(data?.message);
+    toast.success(res?.data?.message);
 
     setIsLogOut(true);
   };
