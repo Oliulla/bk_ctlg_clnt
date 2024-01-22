@@ -39,7 +39,7 @@ export default function LoginForm() {
           dispatch(setToken(token));
           const jwtData = parseJwt(token);
           dispatch(setUser(jwtData));
-          console.log("JWT DATA-->", jwtData);
+          // console.log("JWT DATA-->", jwtData);
 
           // Redirect to the customer dashboard
           navigate("/");

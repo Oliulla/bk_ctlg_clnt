@@ -8,11 +8,13 @@ import {
 } from "../redux/apis/booksApi";
 import useAuthEmail from "../hooks/useAuthEmail";
 import SubmitReviewForm from "../components/__SubmitReviewForm/__SubmitReviewForm";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function BookDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const currentUserEmail = useAuthEmail();
+  const token = useAuthToken();
 
   const { data, isLoading } = useGetBookDetailsQuery(id);
   const book = data?.data;
@@ -97,7 +99,11 @@ export default function BookDetailsPage() {
         </>
 
         <>
-          <SubmitReviewForm bookId={id} email={book.user_email} />
+          {book?.user_email !== currentUserEmail && token ? (
+            <SubmitReviewForm bookId={id} />
+          ) : (
+            ""
+          )}
         </>
       </div>
     </div>
