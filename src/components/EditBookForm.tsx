@@ -1,7 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Loading from "./ui/Loading";
-import { useGetBookDetailsQuery } from "../redux/apis/booksApi";
+import {
+  useGetBookDetailsQuery,
+  useUpdateABookMutation,
+} from "../redux/apis/booksApi";
+import LoadingButton from "./ui/__Loader/__LoadingButton";
+import { toast } from "react-toastify";
 
 interface BookFormData {
   title: string;
@@ -12,10 +17,13 @@ interface BookFormData {
 
 export default function EditBookForm() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const { data, isLoading } = useGetBookDetailsQuery(id);
   const bookToEdit = data?.data;
+  const [updateBook, { isLoading: isUpdating }] = useUpdateABookMutation();
 
-  console.log(bookToEdit)
+  // console.log(bookToEdit)
 
   const { register, handleSubmit } = useForm<BookFormData>();
 
@@ -23,8 +31,19 @@ export default function EditBookForm() {
     return <Loading />;
   }
 
-  const onSubmit = (data: BookFormData) => {
-    console.log(data);
+  const onSubmit = async (data: BookFormData) => {
+    try {
+      const res: any = await updateBook({ id, data });
+      if (!res.data.success) {
+        toast.success(res.data?.message);
+        return;
+      }
+
+      toast.success(res.data?.message);
+      return navigate("/all-books");
+    } catch (error) {
+      console.log("Updated failed:", error);
+    }
   };
 
   return (
@@ -33,7 +52,7 @@ export default function EditBookForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label htmlFor="title" className="block text-lg font-semibold mb-2">
-            Title
+            Title <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -47,7 +66,7 @@ export default function EditBookForm() {
 
         <div className="mb-4">
           <label htmlFor="author" className="block text-lg font-semibold mb-2">
-            Author
+            Author <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -61,7 +80,7 @@ export default function EditBookForm() {
 
         <div className="mb-4">
           <label htmlFor="genre" className="block text-lg font-semibold mb-2">
-            Genre
+            Genre <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -78,7 +97,7 @@ export default function EditBookForm() {
             htmlFor="publicationDate"
             className="block text-lg font-semibold mb-2"
           >
-            Publication Date
+            Publication Date <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -90,12 +109,16 @@ export default function EditBookForm() {
         </div>
 
         <div className="text-right">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Update Book
-          </button>
+          {isUpdating ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Update Book
+            </button>
+          )}
         </div>
       </form>
     </div>
