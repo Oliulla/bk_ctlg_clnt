@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAddNewBookMutation } from "../redux/apis/booksApi";
 import useAuthEmail from "../hooks/useAuthEmail";
+import LoadingButton from "./ui/__Loader/__LoadingButton";
 // import { useGetSingleUserByEmailQuery } from "../redux/apis/usersApi";
 
 interface BookFormData {
@@ -18,7 +19,7 @@ export default function AddNewBookForm() {
 
   // console.log(loginUserEmail);
 
-  const [addBook] = useAddNewBookMutation();
+  const [addBook, { isLoading: isNewBookAddLoading = true}] = useAddNewBookMutation();
 
   const onSubmit = async (data: BookFormData) => {
     // console.log(data);
@@ -97,12 +98,16 @@ export default function AddNewBookForm() {
         </div>
 
         <div className="text-right">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Add Book
-          </button>
+          {isNewBookAddLoading ? (
+            <LoadingButton />
+          ) : (
+            <button
+              type="submit"
+              className=" bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded"
+            >
+              Add Book
+            </button>
+          )}
         </div>
       </form>
     </div>

@@ -31,7 +31,7 @@ export default function BookDetailsPage() {
     const isConfirmed = window.confirm(
       "Are you sure you want to delete this book?"
     );
-    if (isConfirmed) {
+    if (isConfirmed && book?.user_email === currentUserEmail) {
       try {
         await deleteBook(bookId);
         toast.success("Book Deleted");
@@ -54,7 +54,6 @@ export default function BookDetailsPage() {
           {" "}
           Publication Date: {book.publication_date.split("T00")[0]}
         </p>
-
         <>
           {book?.user_email === currentUserEmail && (
             <div className="mt-4 space-x-2">
