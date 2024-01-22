@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Loading from "../components/ui/Loading";
 import { toast } from "react-toastify";
 import {
+  useAddUserWishlistMutation,
   useDeleteABookMutation,
   useGetBookDetailsQuery,
 } from "../redux/apis/booksApi";
@@ -21,6 +22,7 @@ export default function BookDetailsPage() {
   // console.log(book)
 
   const [deleteBook] = useDeleteABookMutation();
+  const [addWishlist] = useAddUserWishlistMutation();
 
   if (isLoading) {
     return <Loading />;
@@ -44,6 +46,37 @@ export default function BookDetailsPage() {
     return navigate("/sign-in");
   };
 
+  // Handler to add book as wishlist
+  const handleAddWishlist = async () => {
+    // console.log("clicked");
+    if (!token) {
+      return navigate("/sign-in");
+    }
+
+    try {
+      const res: any = await addWishlist({
+        bookId: id,
+        readerEmail: currentUserEmail,
+      });
+      // console.log(res);
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // console.log(
+  //   book.wishlist.filter((wish: any) => wish.reader_email === currentUserEmail)
+  //     .length > 0
+  // );
+
+  // Check is current user already has or not in wishlist
+  const isCurrentUserInWishlist =
+    book.wishlist.filter((wish: any) => wish.reader_email === currentUserEmail)
+      .length > 0;
+
   return (
     <div className="container mx-auto p-4">
       <div className="bg-white rounded-lg shadow-md p-6 mb-4">
@@ -55,7 +88,7 @@ export default function BookDetailsPage() {
           Publication Date: {book.publication_date.split("T00")[0]}
         </p>
         <>
-          {book?.user_email === currentUserEmail && (
+          {book?.user_email === currentUserEmail ? (
             <div className="mt-4 space-x-2">
               <Link
                 to={`/edit-book/${id}`}
@@ -70,6 +103,39 @@ export default function BookDetailsPage() {
                 Delete
               </button>
             </div>
+          ) : (
+            <>
+              <div className="mt-4">
+                {!isCurrentUserInWishlist ? (
+                  <>
+                    <button
+                      disabled={isCurrentUserInWishlist}
+                      onClick={handleAddWishlist}
+                      className={`text-white px-4 py-2 rounded ${
+                        isCurrentUserInWishlist
+                          ? "bg-gray-500"
+                          : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    >
+                      Add Wishlist
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="mb-1 text-red-600">
+                      Already added in wishlist
+                    </p>
+                    <Link
+                      to={"/my-profile"}
+                      className={`text-white px-4 py-2 rounded mt-4 bg-blue-500 hover:bg-blue-600
+                    }`}
+                    >
+                      Check Wishlist
+                    </Link>
+                  </>
+                )}
+              </div>
+            </>
           )}
         </>
       </div>

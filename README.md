@@ -23,3 +23,5 @@ npm run dev
 ### \* Unauthenticated user can't add any review.
 
 ### \* A user who isn't the owner of a book is neither able to update nor delete that book.
+
+### \* A user who is the owner of a book isn't able to add book as wishlist.

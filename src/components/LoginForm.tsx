@@ -45,6 +45,9 @@ export default function LoginForm() {
           navigate("/");
         }
       } else {
+        toast.error(
+          "Please sign-up first!!! There is no user found with the email"
+        );
         console.error("Error logging in");
       }
     } catch (error) {

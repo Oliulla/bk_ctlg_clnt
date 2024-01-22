@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import useAuthEmail from "../../hooks/useAuthEmail";
 import { useInsertReveiwMutation } from "../../redux/apis/booksApi";
 import { toast } from "react-toastify";
+import LoadingButton from "../ui/__Loader/__LoadingButton";
 
 interface ReviewFormData {
   comment: string;
@@ -21,7 +22,8 @@ const SubmitReviewForm: React.FC<SubmitReviewFormProps> = ({ bookId }) => {
     reset,
     formState: { errors },
   } = useForm<ReviewFormData>();
-  const [insertReview] = useInsertReveiwMutation();
+  const [insertReview, { isLoading: isReviewInserting }] =
+    useInsertReveiwMutation();
 
   const onSubmit: SubmitHandler<ReviewFormData> = async (data) => {
     const reviewData = {
@@ -55,12 +57,18 @@ const SubmitReviewForm: React.FC<SubmitReviewFormProps> = ({ bookId }) => {
             {/* Display validation error message */}
             {errors.comment && <span>{errors.comment.message}</span>}
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
-          >
-            Submit Review
-          </button>
+          <div>
+            {isReviewInserting ? (
+              <LoadingButton />
+            ) : (
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
+              >
+                Submit Review
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </>
