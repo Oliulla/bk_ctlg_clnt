@@ -6,14 +6,12 @@ import {
   useDeleteABookMutation,
   useGetBookDetailsQuery,
 } from "../redux/apis/booksApi";
-import useAuthToken from "../hooks/useAuthToken";
 import useAuthEmail from "../hooks/useAuthEmail";
 import SubmitReviewForm from "../components/__SubmitReviewForm/__SubmitReviewForm";
 
 export default function BookDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const token = useAuthToken();
   const currentUserEmail = useAuthEmail();
 
   const { data, isLoading } = useGetBookDetailsQuery(id);
@@ -56,7 +54,7 @@ export default function BookDetailsPage() {
         </p>
 
         <>
-          {token && book?.user_email === currentUserEmail && (
+          {book?.user_email === currentUserEmail && (
             <div className="mt-4 space-x-2">
               <Link
                 to={`/edit-book/${id}`}

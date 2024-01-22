@@ -1,15 +1,16 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
-import { setToken } from "../redux/authSlice/authSlice";
-import { useState } from "react";
+import { setToken, setUser } from "../redux/authSlice/authSlice";
+// import { useState } from "react";
 import { toast } from "react-toastify";
 import { useUserLogOutMutation } from "../redux/apis/authApis";
 import useAuthToken from "../hooks/useAuthToken";
+import Loader from "../components/ui/__Loader/__Loader";
 
 export default function Navbar() {
   const dispatch = useDispatch();
-  const [isLogOut, setIsLogOut] = useState<Boolean>(false);
+  // const [isLogOut, setIsLogOut] = useState<Boolean>(false);
   const [userLogOut, { isLoading: isUserLogoutLoading }] =
     useUserLogOutMutation();
 
@@ -19,13 +20,18 @@ export default function Navbar() {
   // Handle user logout
   const handleSignOut = async () => {
     dispatch(setToken(null));
+    dispatch(setUser({ payload: null }));
     Cookies.set("book-ctlg-accessToken", "");
     const res: any = await userLogOut({});
 
     toast.success(res?.data?.message);
 
-    setIsLogOut(true);
+    // setIsLogOut(true);
   };
+
+  if (isUserLogoutLoading) {
+    return <Loader />;
+  }
 
   return (
     <nav className="bg-gray-900 p-4 shadow-md">

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { setToken } from "../redux/authSlice/authSlice";
+import { setToken, setUser } from "../redux/authSlice/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useUserLoginMutation } from "../redux/apis/authApis";
@@ -37,6 +37,9 @@ export default function LoginForm() {
           const token = res?.data?.data.accessToken;
           Cookies.set("book-ctlg-accessToken", token);
           dispatch(setToken(token));
+          const jwtData = parseJwt(token);
+          dispatch(setUser(jwtData));
+          console.log("JWT DATA-->", jwtData);
 
           // Redirect to the customer dashboard
           navigate("/");
@@ -48,6 +51,17 @@ export default function LoginForm() {
       console.error("Error logging in:", error);
     }
   };
+
+  function parseJwt(token: string) {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace("-", "+").replace("_", "/");
+      return JSON.parse(window.atob(base64));
+    } catch (error) {
+      // console.error("Error parsing JWT:", error);
+      return null;
+    }
+  }
 
   return (
     <>

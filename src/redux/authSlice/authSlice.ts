@@ -33,9 +33,9 @@ const initialToken = Cookies.get("book-ctlg-accessToken") || null;
 
 // Parse user details from the refresh token
 const initialUser = parseJwt(initialToken as string) || {
-  email: null,
-  secret: null,
-  expires_in: null,
+  userEmail: null,
+  iat: null,
+  exp: null,
 };
 
 // Create the auth slice
@@ -51,9 +51,9 @@ const authSlice = createSlice({
     },
     setUser: (state, action) => {
       state.user = {
-        email: action.payload.email || null,
-        secret: action.payload.secret || null,
-        expires_in: action.payload.expires_in || null,
+        userEmail: action.payload.userEmail || null,
+        iat: action.payload.iat || null,
+        exp: action.payload.exp || null,
       };
     },
   },

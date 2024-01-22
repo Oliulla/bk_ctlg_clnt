@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import useAuthEmail from "../../hooks/useAuthEmail";
 import { useInsertReveiwMutation } from "../../redux/apis/booksApi";
 import { toast } from "react-toastify";
+import useAuthToken from "../../hooks/useAuthToken";
 
 interface ReviewFormData {
   comment: string;
@@ -18,6 +19,8 @@ const SubmitReviewForm: React.FC<SubmitReviewFormProps> = ({
   email,
 }) => {
   const currentUserEmail = useAuthEmail();
+  const token = useAuthToken();
+
   const {
     register,
     handleSubmit,
@@ -45,31 +48,32 @@ const SubmitReviewForm: React.FC<SubmitReviewFormProps> = ({
 
   return (
     <>
-      {currentUserEmail !== email && (
-        <>
-          <div>
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-              <h3 className="text-lg font-semibold mb-2">Submit a Review</h3>
-              <textarea
-                {...register("comment", { required: "Review is required" })}
-                placeholder="Your review"
-                className="border rounded p-2 w-full"
-                required
-              />
-              <div className="text-red-500">
-                {/* Display validation error message */}
-                {errors.comment && <span>{errors.comment.message}</span>}
-              </div>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
-              >
-                Submit Review
-              </button>
-            </form>
-          </div>
-        </>
-      )}
+      {currentUserEmail !== email ||
+        (token && (
+          <>
+            <div>
+              <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                <h3 className="text-lg font-semibold mb-2">Submit a Review</h3>
+                <textarea
+                  {...register("comment", { required: "Review is required" })}
+                  placeholder="Your review"
+                  className="border rounded p-2 w-full"
+                  required
+                />
+                <div className="text-red-500">
+                  {/* Display validation error message */}
+                  {errors.comment && <span>{errors.comment.message}</span>}
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2"
+                >
+                  Submit Review
+                </button>
+              </form>
+            </div>
+          </>
+        ))}
     </>
   );
 };
