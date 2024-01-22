@@ -23,6 +23,6 @@ export const rootSplitApis = createApi({
     credentials: "include",
   }) as BaseQueryFn,
 
-  tagTypes: [tagTypes.BOOKS, tagTypes.USERS, tagTypes.AUTH],
+  tagTypes: [tagTypes.BOOKS, tagTypes.USERS, tagTypes.AUTH] as string[],
   endpoints: () => ({}),
 });

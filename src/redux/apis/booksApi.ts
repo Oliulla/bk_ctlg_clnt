@@ -1,11 +1,12 @@
 import { apiOperationMethods } from "../../constants/apiOperationMethods";
+import { tagTypes } from "../common/constants";
 import { rootSplitApis } from "./rootSplitApis";
 
 const booksApi = rootSplitApis.injectEndpoints({
   endpoints: (builder) => ({
     getRecentBooks: builder.query({
       query: () => `books/get-all-books`,
-      providesTags: ["books"],
+      providesTags: [tagTypes.BOOKS],
     }),
     getAllBooks: builder.query({
       query: ({ dataLimit, searchTerm, genre, publication_date }) => {
@@ -26,10 +27,11 @@ const booksApi = rootSplitApis.injectEndpoints({
 
         return queryString;
       },
-      providesTags: ["books"],
+      providesTags: [tagTypes.BOOKS],
     }),
     getBookDetails: builder.query({
       query: (id) => `books/${id}`,
+      providesTags: [tagTypes.BOOKS],
     }),
     addNewBook: builder.mutation({
       query: (data) => ({
@@ -38,12 +40,24 @@ const booksApi = rootSplitApis.injectEndpoints({
         body: data,
       }),
     }),
+    insertReveiw: builder.mutation({
+      query: (reviewData) => ({
+        url: `books/${reviewData.bookId}`,
+        method: apiOperationMethods.POST,
+        body: {
+          user_email: reviewData?.user_email,
+          comment: reviewData?.comment,
+        },
+      }),
+      // Invalidate the cache for getBookDetails with the specified bookId
+      invalidatesTags: [tagTypes.BOOKS],
+    }),
     deleteABook: builder.mutation({
       query: (id) => ({
         url: `books/${id}`,
         method: apiOperationMethods.DELETE,
       }),
-      invalidatesTags: ["books"],
+      invalidatesTags: [tagTypes.BOOKS],
     }),
   }),
 });
@@ -52,6 +66,9 @@ export const {
   useGetRecentBooksQuery,
   useGetAllBooksQuery,
   useGetBookDetailsQuery,
+
   useAddNewBookMutation,
+  useInsertReveiwMutation,
+
   useDeleteABookMutation,
 } = booksApi;

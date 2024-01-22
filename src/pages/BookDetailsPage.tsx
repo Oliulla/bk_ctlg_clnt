@@ -10,12 +10,12 @@ import useAuthToken from "../hooks/useAuthToken";
 import useAuthEmail from "../hooks/useAuthEmail";
 import SubmitReviewForm from "../components/__SubmitReviewForm/__SubmitReviewForm";
 
-
 export default function BookDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const token = useAuthToken();
   const currentUserEmail = useAuthEmail();
+
   const { data, isLoading } = useGetBookDetailsQuery(id);
   const book = data?.data;
   // console.log(book)
@@ -81,9 +81,14 @@ export default function BookDetailsPage() {
             <>
               <h2 className="text-xl font-semibold mb-4">Reviews</h2>
               {book?.reviews.map(
-                (review: { user_id: string; comment: string }, idx: number) => (
+                (
+                  review: { user_email: string; comment: string },
+                  idx: number
+                ) => (
                   <div key={idx} className="border-b py-4">
-                    <p className="text-gray-600 mb-1">User: {review.user_id}</p>
+                    <p className="text-gray-600 mb-1">
+                      User: {review.user_email}
+                    </p>
                     {/* <p className="mb-1">Rating: {review.rating} stars</p> */}
                     <p className="text-gray-600">{review.comment}</p>
                   </div>
@@ -94,7 +99,7 @@ export default function BookDetailsPage() {
         </>
 
         <>
-          <SubmitReviewForm bookId={id} />
+          <SubmitReviewForm bookId={id} email={book.user_email} />
         </>
       </div>
     </div>
