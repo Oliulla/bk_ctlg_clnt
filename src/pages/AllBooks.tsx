@@ -10,12 +10,15 @@ import {
   useGetRecentBooksQuery,
 } from "../redux/apis/booksApi";
 import Loader from "../components/ui/__Loader/__Loader";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function AllBooks() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
   const [filterPublicationDate, setFilterPublicationDate] = useState("");
   // const [allBooksD, setAllBooksD] = useState([]);
+
+  const token = useAuthToken();
 
   const { data: recentBooks, isLoading: isRecentBookLoading } =
     useGetRecentBooksQuery(undefined);
@@ -25,12 +28,18 @@ export default function AllBooks() {
 
   // const genres = books?.map((book: { genre: string }) => book.genre);
   // Remove Duplicate from genres array
-  const genres: string[] = [...new Set(books?.map((book) => book.genre))];
+  const genres: string[] = [
+    ...new Set(books?.map((book: { genre: string }) => book.genre)),
+  ];
 
-  const publicationYears = books?.map(
-    (book: { publication_date: String }) =>
-      book.publication_date.split("T00")[0]
-  );
+  const publicationYears = [
+    ...new Set(
+      books?.map(
+        (book: { publication_date: String }) =>
+          book.publication_date.split("T00")[0]
+      )
+    ),
+  ];
 
   // console.log(dataLimit);
   // const queryString =
@@ -116,14 +125,18 @@ export default function AllBooks() {
         ))}
       </div>
 
-      <div className="flex justify-end my-10 mr-10">
-        <Link
-          to="/add-new-book"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Add New
-        </Link>
-      </div>
+      {token && (
+        <>
+          <div className="flex justify-end my-10 mr-10">
+            <Link
+              to="/add-new-book"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Add New
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 }
