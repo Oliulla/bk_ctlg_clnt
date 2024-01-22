@@ -18,7 +18,7 @@ export default function AllBooks() {
   const [filterPublicationDate, setFilterPublicationDate] = useState("");
   // const [allBooksD, setAllBooksD] = useState([]);
 
-  const token = useAuthToken();
+  const token: string | null = useAuthToken();
 
   const { data: recentBooks, isLoading: isRecentBookLoading } =
     useGetRecentBooksQuery(undefined);
@@ -49,7 +49,7 @@ export default function AllBooks() {
   //   (filterPublicationDate ? `&publication_date=${filterPublicationDate}` : "");
 
   const { data, isLoading, isError } = useGetAllBooksQuery({
-    dataLimit,
+    dataLimit, // For future dev and for paging
     searchTerm,
     genre: filterGenre,
     publication_date: filterPublicationDate,
