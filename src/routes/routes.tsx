@@ -8,6 +8,8 @@ import AddNewBook from "../pages/AddNewBook";
 import BookDetailsPage from "../pages/BookDetailsPage";
 import EditBook from "../pages/EditBook";
 import UserProfile from "../pages/UserProfile";
+import AuthGaurd from "../helpers/__AuthHelper/__AuthenticationGaurd";
+import AuthMiddleware from "../helpers/__AuthHelper/__AuthHelper";
 
 export const router = createBrowserRouter([
   {
@@ -20,15 +22,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "/sign-up",
-        element: <SignUp />,
+        element: (
+          <AuthGaurd>
+            <SignUp />
+          </AuthGaurd>
+        ),
       },
       {
         path: "/sign-in",
-        element: <Login />,
+        element: (
+          <AuthGaurd>
+            <Login />
+          </AuthGaurd>
+        ),
       },
       {
         path: "/my-profile",
-        element: <UserProfile />,
+        element: (
+          <AuthMiddleware>
+            <UserProfile />
+          </AuthMiddleware>
+        ),
       },
       {
         path: "/all-books",
@@ -36,7 +50,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/add-new-book",
-        element: <AddNewBook />,
+        element: (
+          <AuthMiddleware>
+            <AddNewBook />
+          </AuthMiddleware>
+        ),
       },
       {
         path: "/book-details/:id",
@@ -44,7 +62,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/edit-book/:id",
-        element: <EditBook />,
+        element: (
+          <AuthMiddleware>
+            <EditBook />
+          </AuthMiddleware>
+        ),
       },
     ],
   },

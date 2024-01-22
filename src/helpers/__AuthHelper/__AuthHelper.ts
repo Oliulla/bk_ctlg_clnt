@@ -1,20 +1,24 @@
 import { useNavigate } from "react-router-dom";
-import { store } from "../../redux/store/store";
+import { useEffect } from "react";
+import useAuthToken from "../../hooks/useAuthToken";
 
-type IAuthMiddleware = {
+type IAuthGaurd = {
   children: React.ReactElement;
 };
 
-const AuthMiddleware: React.FC<IAuthMiddleware> = ({ children }) => {
-  const token = store.getState().authSlice.token;
+const AuthMiddleware: React.FC<IAuthGaurd> = ({ children }) => {
+  const token = useAuthToken();
   const navigate = useNavigate();
 
-  if (!token) {
-    // Redirect to login if there is no token
-    navigate("/sign-in");
-    // Render nothing while redirecting
-    return null;
-  }
+  useEffect(() => {
+    if (!token) {
+      // Redirect to home if there is already a token
+      navigate("/sign-in");
+    }
+
+    // Return undefined to indicate no cleanup is needed
+    return undefined;
+  }, [token, navigate]);
 
   // Render the children if the user is authenticated
   return children;

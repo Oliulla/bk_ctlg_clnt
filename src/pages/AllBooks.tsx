@@ -3,9 +3,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 // import { dummyBooks } from '../components/RecentBooks';
 
-import Loading from "../components/ui/Loading";
+// import Loading from "../components/ui/Loading";
 import { IBooks } from "../types/globalTypes";
-import { useGetAllBooksQuery, useGetRecentBooksQuery } from "../redux/apis/booksApi";
+import {
+  useGetAllBooksQuery,
+  useGetRecentBooksQuery,
+} from "../redux/apis/booksApi";
+import Loader from "../components/ui/__Loader/__Loader";
 
 export default function AllBooks() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,14 +19,16 @@ export default function AllBooks() {
 
   const { data: recentBooks, isLoading: isRecentBookLoading } =
     useGetRecentBooksQuery(undefined);
-  const books = recentBooks?.data;
+  const books: IBooks[] = recentBooks?.data;
 
   const dataLimit = recentBooks?.meta?.total;
 
-  const genres = books?.map((book: { genre: string }) => book.genre);
+  // const genres = books?.map((book: { genre: string }) => book.genre);
+  // Remove Duplicate from genres array
+  const genres: string[] = [...new Set(books?.map((book) => book.genre))];
 
   const publicationYears = books?.map(
-    (book: { publication_date: string }) =>
+    (book: { publication_date: String }) =>
       book.publication_date.split("T00")[0]
   );
 
@@ -42,14 +48,14 @@ export default function AllBooks() {
   const allBooks = data?.data;
 
   if (isRecentBookLoading) {
-    return <Loading />;
+    return <Loader />;
   }
 
   if (isLoading) {
-    return <Loading />;
+    return <Loader />;
   }
   if (isError) {
-    return "Something went wrong";
+    return <p>Something went wrong!!!</p>;
   }
 
   // console.log(searchTerm, filterGenre, filterPublicationDate)
@@ -74,7 +80,7 @@ export default function AllBooks() {
           onChange={(e) => setFilterGenre(e.target.value)}
         >
           <option value="">Select Genre</option>
-          {genres?.map((genre: string, index: number) => (
+          {genres?.map((genre, index) => (
             <option key={index} value={genre}>
               {genre}
             </option>

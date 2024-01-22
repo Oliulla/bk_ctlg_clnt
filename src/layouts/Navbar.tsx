@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { setToken } from "../redux/authSlice/authSlice";
 import { useState } from "react";
-// import { apiOperationMethods } from "../constants/apiOperationMethods";
 import { toast } from "react-toastify";
 import { useUserLogOutMutation } from "../redux/apis/authApis";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -13,26 +13,15 @@ export default function Navbar() {
   const [userLogOut, { isLoading: isUserLogoutLoading }] =
     useUserLogOutMutation();
 
-  // Handle admin logout
+  const token = useAuthToken();
+  // console.log(token);
+
+  // Handle user logout
   const handleSignOut = async () => {
     dispatch(setToken(null));
     Cookies.set("book-ctlg-accessToken", "");
-    // Cookies.set("book-ctlg-refreshToken", "", {
-    //   domain: "http://localhost:3000",
-    //   path: "/",
-    // });
-
-    // const res = await fetch("http://localhost:5000/api/v1/auth/log-out", {
-    //   method: apiOperationMethods.POST,
-    //   credentials: "include",
-    // });
-
-    // // console.log("res -->", res);
-    // const data = await res.json();
-
     const res: any = await userLogOut({});
 
-    // console.log("res data -->", data);
     toast.success(res?.data?.message);
 
     setIsLogOut(true);
@@ -55,30 +44,37 @@ export default function Navbar() {
               Add New Book
             </Link>
           </li>
-          <li>
-            <Link to="/sign-in" className="text-white hover:underline">
-              Sign In
-            </Link>
-          </li>
-          <li>
-            <Link to="/sign-up" className="text-white hover:underline">
-              Sign Up
-            </Link>
-          </li>
-          <li>
-            <Link to="/my-profile" className="text-white hover:underline">
-              My Profile
-            </Link>
-          </li>
-          <li>
-            <button
-              onClick={handleSignOut}
-              type="submit"
-              className="bg-red-900 text-white px-2"
-            >
-              Sign Out
-            </button>
-          </li>
+          {token ? (
+            <>
+              <li>
+                <Link to="/my-profile" className="text-white hover:underline">
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleSignOut}
+                  type="submit"
+                  className="bg-red-900 text-white px-2"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/sign-in" className="text-white hover:underline">
+                  Sign In
+                </Link>
+              </li>
+              <li>
+                <Link to="/sign-up" className="text-white hover:underline">
+                  Sign Up
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>
