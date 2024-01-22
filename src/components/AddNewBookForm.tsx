@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAddNewBookMutation } from "../redux/apis/booksApi";
+import useAuthEmail from "../hooks/useAuthEmail";
+// import { useGetSingleUserByEmailQuery } from "../redux/apis/usersApi";
 
 interface BookFormData {
   title: string;
@@ -11,16 +13,25 @@ interface BookFormData {
 
 export default function AddNewBookForm() {
   const { register, handleSubmit, reset } = useForm<BookFormData>();
+  const loginUserEmail: string = useAuthEmail();
+  // const { data: currentUser, isLoading } = useGetSingleUserByEmailQuery({email: loginUserEmail});
+
+  // console.log(loginUserEmail);
 
   const [addBook] = useAddNewBookMutation();
 
   const onSubmit = async (data: BookFormData) => {
     // console.log(data);
 
+    const bookData: BookFormData & { user_email: string } = {
+      ...data,
+      user_email: loginUserEmail,
+    };
+
     try {
-      await addBook(data);
+      await addBook(bookData);
       toast.success("Book added");
-      reset(); 
+      reset();
     } catch (error) {
       // Handle error here if needed
       console.error("Error adding book:", error);

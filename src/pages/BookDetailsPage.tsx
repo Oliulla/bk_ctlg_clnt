@@ -2,11 +2,16 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 
 import Loading from "../components/ui/Loading";
 import { toast } from "react-toastify";
-import { useDeleteABookMutation, useGetBookDetailsQuery } from "../redux/apis/booksApi";
+import {
+  useDeleteABookMutation,
+  useGetBookDetailsQuery,
+} from "../redux/apis/booksApi";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function BookDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const token = useAuthToken();
   const { data, isLoading } = useGetBookDetailsQuery(id);
   const book = data?.data;
   // console.log(book)
@@ -39,7 +44,7 @@ export default function BookDetailsPage() {
     const isConfirmed = window.confirm(
       "Are you sure you want to delete this book?"
     );
-    if (isConfirmed) {
+    if (isConfirmed && token) {
       try {
         await deleteBook(bookId);
         toast.success("Book Deleted");
@@ -49,6 +54,7 @@ export default function BookDetailsPage() {
         console.error("Error Delete book:", error);
       }
     }
+    return navigate("/sign-in");
   };
 
   return (
