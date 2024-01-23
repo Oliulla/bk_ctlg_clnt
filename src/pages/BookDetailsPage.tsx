@@ -15,7 +15,7 @@ import LoadingButton from "../components/ui/__Loader/__LoadingButton";
 export default function BookDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const currentUserEmail = useAuthEmail();
+  const currentUserEmail: string = useAuthEmail();
   const token = useAuthToken();
 
   const { data, isLoading } = useGetBookDetailsQuery(id);

@@ -1,59 +1,61 @@
-import useAuthEmail from "../hooks/useAuthEmail";
-import { useGetAllBooksQuery } from "../redux/apis/booksApi";
-import Loader from "./ui/__Loader/__Loader";
+import React, { FC, useState } from "react";
 
-const Wishlist = () => {
-  // To get all books assign all required props as empty string ("")
-  const { data, isLoading } = useGetAllBooksQuery({
-    searchTerm: "",
-    genre: "",
-    publication_date: "",
-  });
-  const currentUserEmail = useAuthEmail();
+export enum StatusActions {
+  CURRENTLY_READING = "Currently Reading",
+  PLAN_TO_READ_SOON = "Plan To Read Soon",
+  FINISHED_READING = "Finished Reading",
+}
 
-  // Books
-  const books = data?.data;
+export enum WhislistActions {
+  CURRENTLY_READING = "Currently Reading",
+  PLAN_TO_READ_SOON = "Plan To Read Soon",
+}
 
-  if (isLoading) {
-    return <Loader />;
-  }
+interface WishlistProps {
+  bookStatusTxt: String;
+  actions: StatusActions[] | WhislistActions[];
+  books: any[];
+}
 
-  // console.log(data, isLoading, isError);
-  const userWishListBooks = books.filter((book: any) =>
-    book.wishlist.some((wish: any) => wish.reader_email === currentUserEmail)
-  );
+const Wishlist: FC<WishlistProps> = ({ bookStatusTxt, actions, books }) => {
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  // console.log(userWishListBooks);
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  console.log(selectedStatus);
 
   return (
-    <div className="bg-white p-4 rounded min-h-screen">
-      {userWishListBooks?.length > 0 ? (
-        <div>
-          {" "}
-          <h2 className="text-2xl font-semibold mb-4">My Wishlist</h2>
-          <ul className="list-disc px-6">
-            {userWishListBooks.map((book: any) => (
-              <li className="mb-2 shadow-2xl">
-                <span className="font-semibold">{book?.title}</span> -{" "}
-                <span>{book?.author}</span>
-                <span> (Wishlist)</span>
-                <div className="flex space-x-2 mt-2">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                    Start Reading
-                  </button>
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                    Finished Reading
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p className="text-2xl font-semibold mb-4">
-          You don't have any book in wishlist
-        </p>
-      )}
+    <div className="p-4 border w-full mx-auto">
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">{bookStatusTxt}</h2>
+        <ul className="list-disc px-6">
+          {books.map((book: any) => (
+            <li className="mb-2 py-4 px-2 bg-white shadow-2xl" key={book._id}>
+              <span className="font-semibold">{book?.title}</span> -{" "}
+              <span>{book?.author}</span>
+              <span> (Wishlist)</span>
+              <div className="flex space-x-2 mt-2">
+                <select
+                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 cursor-pointer"
+                  onChange={handleStatusChange}
+                  value={selectedStatus}
+                >
+                  <option value="" disabled>
+                    Select Status
+                  </option>
+                  {actions?.map((action, i) => (
+                    <option key={i} value={action}>
+                      {action}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
