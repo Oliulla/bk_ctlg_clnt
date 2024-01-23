@@ -60,9 +60,13 @@ export default function BookDetailsPage() {
         bookId: id,
         readerEmail: currentUserEmail,
       });
-      // console.log(res);
-      if (res.data.success) {
-        toast.success(res.data.message);
+      if (!res?.error?.data?.success) {
+        toast.warning(res?.error?.data?.message);
+        return;
+      }
+
+      if (res?.data?.success) {
+        toast.success(res?.data?.message);
       }
     } catch (error) {
       console.log(error);
@@ -78,6 +82,13 @@ export default function BookDetailsPage() {
   const isCurrentUserInWishlist =
     book.wishlist.filter((wish: any) => wish.reader_email === currentUserEmail)
       .length > 0;
+
+  const isCurreentBookInAnyStatus =
+    book.reading_status.filter(
+      (st: any) => st.reader_email === currentUserEmail
+    ).length > 0;
+
+  // console.log(isCurrentUserInWishlist, isCurreentBookInAnyStatus)
 
   return (
     <div className="container mx-auto p-4">
@@ -108,7 +119,7 @@ export default function BookDetailsPage() {
           ) : (
             <>
               <div className="mt-4">
-                {!isCurrentUserInWishlist ? (
+                {!isCurrentUserInWishlist && !isCurreentBookInAnyStatus ? (
                   <>
                     {isAddingInWishlist ? (
                       <LoadingButton />

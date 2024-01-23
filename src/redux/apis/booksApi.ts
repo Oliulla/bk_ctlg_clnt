@@ -60,6 +60,15 @@ const booksApi = rootSplitApis.injectEndpoints({
       // Invalidate the cache for getBookDetails with the specified id
       invalidatesTags: [tagTypes.BOOKS],
     }),
+    changeBookReadingStatus: builder.mutation({
+      query: ({ bookId, readerEmail, status }) => ({
+        url: `books/wishlist/status/${bookId}&${readerEmail}`,
+        method: apiOperationMethods.POST,
+        body: { status },
+      }),
+      // Invalidate the cache for getBookDetails with the specified id
+      invalidatesTags: [tagTypes.BOOKS],
+    }),
     updateABook: builder.mutation({
       query: ({ id, data }) => ({
         url: `books/${id}`,
@@ -87,6 +96,7 @@ export const {
   useAddNewBookMutation,
   useInsertReveiwMutation,
   useAddUserWishlistMutation,
+  useChangeBookReadingStatusMutation,
 
   useUpdateABookMutation,
 
