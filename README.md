@@ -25,3 +25,5 @@ npm run dev
 ### \* A user who isn't the owner of a book is neither able to update nor delete that book.
 
 ### \* A user who is the owner of a book isn't able to add book as wishlist.
+
+### \* To track your all book status Click 'My Profile' menu from navbar Or visit 'All Books' then add a book to wishlist then you can see a button called 'Check Wishlist' click it and check your all activity with books.
