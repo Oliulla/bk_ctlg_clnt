@@ -10,6 +10,7 @@ import {
 import useAuthEmail from "../hooks/useAuthEmail";
 import SubmitReviewForm from "../components/__SubmitReviewForm/__SubmitReviewForm";
 import useAuthToken from "../hooks/useAuthToken";
+import LoadingButton from "../components/ui/__Loader/__LoadingButton";
 
 export default function BookDetailsPage() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ export default function BookDetailsPage() {
   // console.log(book)
 
   const [deleteBook] = useDeleteABookMutation();
-  const [addWishlist] = useAddUserWishlistMutation();
+  const [addWishlist, { isLoading: isAddingInWishlist }] =
+    useAddUserWishlistMutation();
 
   if (isLoading) {
     return <Loading />;
@@ -108,17 +110,21 @@ export default function BookDetailsPage() {
               <div className="mt-4">
                 {!isCurrentUserInWishlist ? (
                   <>
-                    <button
-                      disabled={isCurrentUserInWishlist}
-                      onClick={handleAddWishlist}
-                      className={`text-white px-4 py-2 rounded ${
-                        isCurrentUserInWishlist
-                          ? "bg-gray-500"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    >
-                      Add Wishlist
-                    </button>
+                    {isAddingInWishlist ? (
+                      <LoadingButton />
+                    ) : (
+                      <button
+                        disabled={isCurrentUserInWishlist}
+                        onClick={handleAddWishlist}
+                        className={`text-white px-4 py-2 rounded ${
+                          isCurrentUserInWishlist
+                            ? "bg-gray-500"
+                            : "bg-blue-500 hover:bg-blue-600"
+                        }`}
+                      >
+                        Add Wishlist
+                      </button>
+                    )}
                   </>
                 ) : (
                   <>
