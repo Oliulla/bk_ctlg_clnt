@@ -3,7 +3,7 @@
 # Book Catalog is built with
 
 ```plaintext
-Vite+React+TypeScript
+Vite+React+Redux+Redux RTQ+TypeScript
 ```
 
 ## To Run Local Server, First need
